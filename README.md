@@ -2,7 +2,6 @@
 LOVE-Projections renders 3D models (*.obj files*) by projecting them onto 2D space using a strong perspective projection approach. A primitive shader has been added, but z-buffering proved beyond my skill set, entirely ruining the effect.
 
 ## Methods
----
 [Perspective Projection](https://en.wikipedia.org/wiki/3D_projection#Perspective_projection) simulates the action of a pinhole camera, allowing for a good amount of depth perspective. I started creating the shader by taking the dot product of the cross product of two edges of a face and a vector towards the light source. This product could then easily be used to shade the RGB values of a polygon. Unfortunately, it became difficult and downright slow to make it so elements wouldn't render over each other. I tried to implement a z-buffer using [z-culling](https://en.wikipedia.org/wiki/Z-buffering#Z-culling), not rendering polygons the farthest away. Unfortunatly, this turned out as effective as you would think it would. Much slower too!
 
 ## Takeaways
