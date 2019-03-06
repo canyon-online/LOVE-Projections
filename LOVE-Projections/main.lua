@@ -67,8 +67,9 @@ end
 
 -- Calculate all the 2D points of a 3D object and store them in obj.points.
 function updateObject(obj)
-    obj.points = {}
     mid = Vector2.new(width / 2, height / 2)
+    obj.points = {}
+    obj.mesh = nil
 
     for i, k in ipairs(obj.f) do
         p1Index = obj.v[k[1].v]
@@ -96,7 +97,6 @@ end
 
 function drawObject(obj)
     mid = Vector2.new(width / 2, height / 2)
-
     -- For every face object, plot the corresponding vertices and calculate
     -- shading if needed.
     for i, k in ipairs(obj.f) do
@@ -114,6 +114,7 @@ function drawObject(obj)
             v3 = Vector3.new(p3Index.x, p3Index.y, p3Index.z)
             cr = Vector3.cross(v2 - v1, v3 - v1)
             d = Vector3.dot(cr, (v1 + v2 + v3) / 3 - light)
+            d = -d
             d = 2 * math.atan(d) / math.pi -- smooth lighting
             love.graphics.setColor(d, d, d)
         else
@@ -134,6 +135,7 @@ function love.keypressed(key, scancode, isrepeat)
         shading = not shading
     elseif key == "backspace" then
         drawTableIndex = ((drawTableIndex-2) % #drawTable) + 1
+        objectToBeDrawn = drawTable[drawTableIndex]
     elseif key == "return" then
         drawTableIndex = (drawTableIndex % #drawTable) + 1
         objectToBeDrawn = drawTable[drawTableIndex]
