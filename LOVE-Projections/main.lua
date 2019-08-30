@@ -1,15 +1,15 @@
 function love.load()
     io.stdout:setvbuf("no")
-
     require("vector")
     matrix = require("matrix")
     objLoader = require("loader")
+    require ("ini")
 
     width = love.graphics.getWidth()
     height = love.graphics.getHeight()
     scale, time = 10, 0
     light = Vector3.new(0, -10, 20 * math.cos(time / 4))
-        camera = Vector3.new(50 * math.sin(time), 50 * math.sin(time), 50 * math.cos(time))
+    camera = Vector3.new(50 * math.sin(time), 50 * math.sin(time), 50 * math.cos(time))
     -- Adjust what the camera is pointing to, accounting for pinhole.
     o = Vector3.new(
         math.pi  * (camera.z >= 0 and 0 or 1) 
@@ -25,43 +25,11 @@ function love.load()
     m3 = matrix{{c.z, s.z, 0}, {-s.z, c.z, 0}, {0, 0, 1}}
     m4 = m1 * m2 * m3
 
-
-    utah = objLoader.load("utah.obj")
-    translateObject(utah, Vector3.new(0, -1.4, 0))
-    scaleObject(utah, 5)
-
-    cube = objLoader.load("cube.obj")
-    translateObject(cube, Vector3.new(-.5, -.5, -.5))
-    scaleObject(cube, 10)
-
-    diamond = objLoader.load("diamond.obj")
-    scaleObject(diamond, 1/10)
-
-    icosahedron = objLoader.load("icosahedron.obj")
-    scaleObject(icosahedron, 4)
-    
-    magnolia = objLoader.load("magnolia.obj")
-    scaleObject(magnolia, 1/4)
-
-    scene = objLoader.load("scene.obj")
-    translateObject(scene, Vector3.new(0, -.5, 0))
-    scaleObject(scene, 2)
-
     love.graphics.setMeshCullMode("front")
     cullMode = true
     love.graphics.setBackgroundColor(.01, .01, .01)
     love.graphics.setLineJoin("none")
     
-    drawTable = {utah, cube, diamond, icosahedron, magnolia, scene}
-    drawTableIndex = 1
-    objectToBeDrawn = drawTable[drawTableIndex]
-
-    createMesh(utah)
-    createMesh(magnolia)
-    createMesh(icosahedron)
-    createMesh(diamond)
-    createMesh(cube)
-    createMesh(scene)
 end
 
 -- Moves the model from the .obj file by a vector3 value.
@@ -133,11 +101,10 @@ function updateVertices(obj)
         v1 = Vector3.new(p1Index.x, p1Index.y, p1Index.z)
         v2 = Vector3.new(p2Index.x, p2Index.y, p2Index.z)
         v3 = Vector3.new(p3Index.x, p3Index.y, p3Index.z)
-        cr = Vector3.cross(v2 - v1, v3 - v1)
+        cr = Vector3.cross(v3 - v1, v2 - v1)
         d = Vector3.dot(cr, (v1 + v2 + v3) / 3 - light)
-        d = (2 * math.atan(d / 3) / math.pi) -- smooth lighting
-        d = -d
-        d = d >= .1 and d or .1
+        d = (2 * math.atan(d / 3) / math.pi) -- smoother lighting
+        d = d >= .15 and d or .15 -- ambient lighting
 
         red = 1 * d
         green = .6 * d
